@@ -14,8 +14,8 @@ dotenv.config()
 
 // Initialize Gemini AI
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
-const PRIMARY_GEMINI_MODEL = "gemini-2.5-flash"
-const FALLBACK_GEMINI_MODEL = "gemini-1.5-flash"
+const PRIMARY_GEMINI_MODEL = "gemini-2.5-flash-lite"
+const FALLBACK_GEMINI_MODEL = "gemini-3.1-flash-lite"
 
 async function generateContentWithFallback(contents) {
   try {
