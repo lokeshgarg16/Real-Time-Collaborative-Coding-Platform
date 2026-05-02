@@ -295,13 +295,39 @@ ${question}
 const runningProcesses = new Map()
 const app = express()
 
+function normalizeOrigin(value) {
+  return String(value || "").trim().replace(/\/$/, "").toLowerCase()
+}
+
+function getConfiguredOrigins() {
+  const raw = [process.env.FRONTEND_ORIGIN, process.env.FRONTEND_ORIGINS]
+    .filter(Boolean)
+    .join(",")
+
+  if (!raw) return new Set()
+
+  return new Set(
+    raw
+      .split(",")
+      .map((item) => normalizeOrigin(item))
+      .filter(Boolean)
+  )
+}
+
+const configuredOrigins = getConfiguredOrigins()
+
 function isAllowedOrigin(origin) {
   if (!origin) return true
 
-  const configuredOrigin = process.env.FRONTEND_ORIGIN
-  if (configuredOrigin && origin === configuredOrigin) return true
+  const normalizedOrigin = normalizeOrigin(origin)
+  if (configuredOrigins.has(normalizedOrigin)) return true
 
-  return /^https?:\/\/localhost:\d+$/i.test(origin)
+  if (/^https?:\/\/localhost:\d+$/i.test(origin)) return true
+
+  // Allow secure DuckDNS origins used in production deployments.
+  if (/^https:\/\/[a-z0-9-]+\.duckdns\.org$/i.test(origin)) return true
+
+  return false
 }
 
 app.use(cors(
