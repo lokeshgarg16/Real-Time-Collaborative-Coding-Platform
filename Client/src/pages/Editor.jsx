@@ -14,7 +14,10 @@ import { CodeAssistant } from "../components/CodeAssistant"
 import {
   connectSocket,
   joinRoom,
+  onJoinSuccess,
   onMembersUpdate,
+  requestRoomState,
+  onRoomState,
   runCode,
   onProgramOutput,
   sendProgramInput,
@@ -30,7 +33,8 @@ import {
   onReviewResult,
   askCodingAssistant,
   onAssistantStarted,
-  onAssistantResult
+  onAssistantResult,
+  onAssistantHistory
 } from "../lib/RoomSocket"
 
 export default function EditorPage() {
@@ -72,6 +76,25 @@ export default function EditorPage() {
     if (!socketRef.current) return
 
     onMembersUpdate(setMembers)
+
+    onRoomState(({ success, members: roomMembers, code: roomCode, language: roomLanguage }) => {
+      if (!success) return
+      if (Array.isArray(roomMembers)) {
+        setMembers(roomMembers)
+      }
+      if (typeof roomCode === "string") {
+        isRemoteUpdate.current = true
+        setCode(roomCode)
+        isRemoteUpdate.current = false
+      }
+      if (typeof roomLanguage === "string") {
+        setLanguage(roomLanguage)
+      }
+    })
+
+    onJoinSuccess(() => {
+      requestRoomState(roomId)
+    })
 
     executionStarted(({ username }) => {
       setIsRunning(true)
@@ -119,10 +142,15 @@ export default function EditorPage() {
       setReviewData(result)
     })
 
-    onAssistantStarted(({ username, question }) => {
+    onAssistantStarted(({ username, replyingTo, question }) => {
       setIsAssistantLoading(true)
-      setAssistantLoadingMeta({ username, question })
+      setAssistantLoadingMeta({ username, replyingTo: replyingTo || username, question })
       setShowAssistant(true)
+    })
+
+    onAssistantHistory(({ messages }) => {
+      if (!Array.isArray(messages)) return
+      setAssistantMessages(messages)
     })
 
     onAssistantResult((result) => {
@@ -134,6 +162,7 @@ export default function EditorPage() {
           id: `${Date.now()}-${Math.random()}`,
           question: result.question,
           askedBy: result.askedBy,
+          replyingTo: result.replyingTo || result.askedBy,
           success: result.success,
           answer: result.answer,
           error: result.error
@@ -162,7 +191,11 @@ export default function EditorPage() {
   const handleRunCode = () => {
     if (!code) return
     setIsRunning(true)
-    runCode(roomId, code, language)
+    const emitted = runCode(roomId, code, language)
+    if (!emitted) {
+      setIsRunning(false)
+      setConsoleOutput((prev) => `${prev}\n[Error] Not connected to backend server. Please restart backend and try again.\n`)
+    }
   }
 
   const sendProgram = (input) => {
@@ -196,13 +229,35 @@ export default function EditorPage() {
   const handleReviewCode = () => {
     if (!code) return
     setShowReview(true)
-    reviewCode(roomId, code, language)
+    const emitted = reviewCode(roomId, code, language)
+    if (!emitted) {
+      setReviewData({
+        success: false,
+        error: "Not connected to backend server. Please restart backend and try again."
+      })
+      setIsReviewing(false)
+    }
   }
 
   const handleAskAssistant = (question) => {
     if (!question || !question.trim()) return
     setShowAssistant(true)
-    askCodingAssistant(roomId, code, language, question)
+    const emitted = askCodingAssistant(roomId, code, language, question)
+    if (!emitted) {
+      setIsAssistantLoading(false)
+      setAssistantLoadingMeta(null)
+      setAssistantMessages((prev) => [
+        ...prev,
+        {
+          id: `${Date.now()}-${Math.random()}`,
+          question,
+          askedBy: location.state?.username || "You",
+          replyingTo: location.state?.username || "You",
+          success: false,
+          error: "Not connected to backend server. Please restart backend and try again."
+        }
+      ])
+    }
   }
 
   return (

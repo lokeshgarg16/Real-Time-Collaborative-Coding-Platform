@@ -1,16 +1,35 @@
-# React + Vite
+# CodeBin Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend for CodeBin real-time collaborative editor.
 
-Currently, two official plugins are available:
+## Run
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. Install dependencies
 
-## React Compiler
+```bash
+npm install
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+2. Configure environment
 
-## Expanding the ESLint configuration
+```env
+VITE_SOCKET_URL=http://localhost:3001
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+3. Start development server
+
+```bash
+npm run dev
+```
+
+## AI Chat (Client Behavior)
+
+- Opens in editor via the Assist action.
+- Shows who asked each question.
+- Shows current assistant status (replying to which user while generating).
+- Hydrates room chat history when joining/rejoining a room.
+- Displays shared assistant responses for all room members in real time.
+
+## Notes
+
+- Full system documentation is in the root README at ../Readme.md.

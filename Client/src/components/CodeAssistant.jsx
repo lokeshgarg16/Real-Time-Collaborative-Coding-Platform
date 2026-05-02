@@ -96,8 +96,8 @@ export function CodeAssistant({
               <Loader2 className="h-4 w-4 animate-spin" />
               <div>
                 <p className="text-sm font-medium">Thinking...</p>
-                {loadingMeta?.username && (
-                  <p className="text-xs text-slate-500 dark:text-slate-400">Question by {loadingMeta.username}</p>
+                {loadingMeta?.replyingTo && (
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Replying to {loadingMeta.replyingTo}</p>
                 )}
               </div>
             </div>

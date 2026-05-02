@@ -5,9 +5,7 @@ let socket = null
 
 export function connectSocket() {
   if (!socket) {
-    socket = io(import.meta.env.VITE_SOCKET_URL, {
-      transports: ["websocket"],
-    })
+    socket = io(import.meta.env.VITE_SOCKET_URL)
 
     socket.on("connect", () => {
       console.log("Socket connected:", socket.id)
@@ -58,6 +56,16 @@ export function onMembersUpdate(cb) {
   socket.on("members-update", cb)
 }
 
+export function requestRoomState(roomId) {
+  ensureSocket()
+  socket.emit("request-room-state", { roomId })
+}
+
+export function onRoomState(cb) {
+  socket.off("room-state")
+  socket.on("room-state", cb)
+}
+
 export function runCode(roomId, code, language) {
   // const s = connectSocket()
 
@@ -72,12 +80,13 @@ export function runCode(roomId, code, language) {
 
   if (!socket || !socket.connected) {
     console.warn("Socket not connected")
-    return
+    return false
   }
 
   console.log("Emitting run-code event", code, "  ::", language);
   console.log("Socket in runCode:", socket)
   socket.emit("run-code", { roomId, code, language })
+  return true
 }
 
 export function executionStarted(cb) {
@@ -125,9 +134,10 @@ export function changeLanguage(roomId, language) {
 export function reviewCode(roomId, code, language) {
   if (!socket || !socket.connected) {
     console.warn("Socket not connected")
-    return
+    return false
   }
   socket.emit("review-code", { roomId, code, language })
+  return true
 }
 
 export function onReviewStarted(cb) {
@@ -143,9 +153,10 @@ export function onReviewResult(cb) {
 export function askCodingAssistant(roomId, code, language, question) {
   if (!socket || !socket.connected) {
     console.warn("Socket not connected")
-    return
+    return false
   }
   socket.emit("assistant-query", { roomId, code, language, question })
+  return true
 }
 
 export function onAssistantStarted(cb) {
@@ -158,8 +169,14 @@ export function onAssistantResult(cb) {
   socket.on("assistant-result", cb)
 }
 
+export function onAssistantHistory(cb) {
+  socket.off("assistant-history")
+  socket.on("assistant-history", cb)
+}
+
 export function disconnectSocket() {
   if (socket) {
+    socket.off("room-state")
     socket.off("sync-code")
     socket.off("code-change")
     socket.off("language-changed")
@@ -170,6 +187,7 @@ export function disconnectSocket() {
     socket.off("review-result")
     socket.off("assistant-started")
     socket.off("assistant-result")
+    socket.off("assistant-history")
     socket.disconnect()
     socket = null
   }

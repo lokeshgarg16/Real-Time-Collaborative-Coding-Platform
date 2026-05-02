@@ -1,6 +1,6 @@
 # 🚀 CodeBin - Real Time Collaborative Code Editor 
 CodeBin is a real-time collaborative code editor that allows multiple users to write, edit, and execute code together in shared rooms. It focuses on functionality, performance, and real-time collaboration.
-## 🌐 Live Demo: https://codebin-xi.vercel.app/
+## 🌐 Live Demo: https://codebin-11.duckdns.org/
 ## ✨ Features
 
 - **Real-time Collaboration** – Multiple users can edit code simultaneously
@@ -25,7 +25,7 @@ CodeBin is a real-time collaborative code editor that allows multiple users to w
 
 - **AI Code Review (Gemini)** – Generate markdown-based code review with quality rating, issue detection, and suggested fixes
 
-- **AI Coding Assistant (Gemini)** – Ask context-aware questions about the current code and language
+- **AI Coding Assistant (Gemini)** – Multi-turn, room-aware chat with per-user attribution, compressed memory, and shared responses
 
 - **Fast UI** – Minimal, clean, performance-focused design
 
@@ -104,6 +104,34 @@ npm run dev
 3. Use **AI Code Review** to analyze current code.
 4. Use **AI Assistant** to ask targeted coding questions.
 5. Review shared AI responses with all participants in the room.
+
+## AI Chat Feature (Implemented)
+
+### What it does
+
+- **Room-scoped memory**: Each room has its own AI chat memory. One room never reads another room's memory.
+- **Per-user attribution**: Each chat turn stores who asked the question and who the assistant is replying to.
+- **Multi-turn continuity**: Assistant prompt includes room summary + recent turns + latest code + latest question.
+- **Automatic compression**: Older chat turns are summarized when history grows too large, while recent turns stay detailed.
+- **Shared assistant stream**: AI started/result events are broadcast to the room so all collaborators see context.
+- **Persistent while room is active**: Memory is written to disk per room for reconnect/reload continuity.
+- **Cleanup on empty room**: When last user disconnects from a room, that room's stored AI memory is deleted.
+- **Model fallback for quota/rate-limit**: Backend tries primary Gemini model first, then falls back automatically on quota/rate-limit errors.
+
+### Memory lifecycle
+
+1. On room join, backend loads room memory from disk and sends assistant history to client.
+2. On each assistant query, backend appends the new turn (askedBy/replyingTo/question/answer).
+3. If history crosses thresholds (turn count or char budget), backend compresses older turns into summary.
+4. Updated memory is persisted to disk for that room.
+5. When room becomes empty, backend deletes that room memory file.
+
+### Why this helps
+
+- Better answer quality in long conversations
+- Stable context across reconnects in active sessions
+- Lower prompt size over time through summary compression
+- Clean isolation and privacy between rooms
 
 ## Demo
 
