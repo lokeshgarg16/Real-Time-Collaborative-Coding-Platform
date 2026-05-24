@@ -28,7 +28,7 @@ export default function HomePage() {
             </Link>
 
             <Link
-              to="https://github.com/Vinay42/CodeBin"
+              to="https://github.com/Vinay42/real-time-collaborative-coding-platform"
               target="_blank"
             >
               <Button variant="outline">

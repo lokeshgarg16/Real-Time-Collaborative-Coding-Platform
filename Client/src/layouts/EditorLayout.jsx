@@ -11,7 +11,7 @@ export default function EditorLayout() {
       <header className="px-6   lg:px-16 h-10 flex items-center justify-between border-b border-gray-200 dark:border-gray-800">
         <Link to="/" className="flex items-center gap-2 font-bold text-lg">
           <Code2 className="h-5 w-5" />
-          CodeBin
+          real-time-collaborative-coding-platform
         </Link>
         <ThemeToggle />
       </header>

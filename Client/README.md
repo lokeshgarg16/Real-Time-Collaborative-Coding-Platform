@@ -1,6 +1,6 @@
-# CodeBin Client
+# real-time-collaborative-coding-platform Client
 
-Frontend for CodeBin real-time collaborative editor.
+Frontend for real-time-collaborative-coding-platform real-time collaborative editor.
 
 ## Run
 

@@ -11,7 +11,7 @@ export default function AppLayout() {
       <header className="px-6  lg:px-16 h-10 flex items-center justify-between border-b border-gray-200 dark:border-gray-800">
         <Link to="/" className="flex items-center gap-2 font-bold text-lg">
           <Code2 className="h-5 w-5" />
-          CodeBin
+          real-time-collaborative-coding-platform
         </Link>
         <ThemeToggle />
       </header>
@@ -23,7 +23,7 @@ export default function AppLayout() {
 
       <footer className="border-t border-gray-200 dark:border-gray-800 h-10 flex items-center justify-center gap-2 text-xs">
         <span className="text-gray-500 dark:text-gray-400">
-          Built for coders • CodeBin
+          Built for coders • real-time-collaborative-coding-platform
         </span>
 
         <Link
