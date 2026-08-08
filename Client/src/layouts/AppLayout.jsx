@@ -27,7 +27,7 @@ export default function AppLayout() {
         </span>
 
         <Link
-          to="https://github.com/Vinay42"
+          to="https://github.com/lokeshgarg16/Real-Time-Collaborative-Coding-Platform.git"
           target="_blank"
         >
           <Github className="h-4 w-4" />

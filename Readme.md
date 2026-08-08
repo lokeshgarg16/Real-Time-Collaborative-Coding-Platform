@@ -50,7 +50,7 @@ CodeBin is a real-time collaborative code editor that allows multiple users to w
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/Vinay42/CodeBin
+git clone https://github.com/lokeshgarg16/Real-Time-Collaborative-Coding-Platform.git
 cd codebin
 ```
 
@@ -162,4 +162,4 @@ npm run dev
 
 ## 📧 Contact
 
-Vinay Thakor -vinaythakor47@gmail.com
+Lokesh Agarwal - lokeshagarwal2003@gmail.com
